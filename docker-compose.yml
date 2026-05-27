@@ -1,0 +1,13 @@
+services:
+  dut:
+    build: .
+    image: hilbench
+    command: ["python", "-m", "hilbench.server", "--host", "0.0.0.0", "--port", "9099"]
+    ports:
+      - "9099:9099"
+
+  runner:
+    image: hilbench
+    depends_on:
+      - dut
+    command: ["scenarios/", "--json", "report.json", "--junit", "report.xml"]

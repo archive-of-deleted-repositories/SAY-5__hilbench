@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check .
+      - name: Types
+        run: mypy
+      - name: Unit tests
+        run: pytest -q --junitxml=pytest-junit.xml
+      - name: Scenario suite
+        run: hilbench scenarios/ --json report.json --junit scenario-junit.xml
+      - name: Summarize JUnit
+        if: always()
+        run: python -c "import xml.etree.ElementTree as ET,glob,sys;[print(f) for f in glob.glob('*junit*.xml')]"
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            pytest-junit.xml
+            scenario-junit.xml
+            report.json
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t hilbench .
+      - name: Run suite in container
+        run: docker run --rm hilbench scenarios/ --json report.json --junit report.xml
