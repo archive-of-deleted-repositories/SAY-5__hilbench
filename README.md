@@ -89,6 +89,36 @@ with `OK` (with optional payload) or `ERR` (with a reason).
 
 An out of range `SETSPEED` drives the controller into `FAULT`; `RESET` recovers.
 
+## Timing tolerance, retry, and flake detection
+
+Benches are noisy, so a single slow response can be a real regression or a one
+off hiccup. `hilbench.robust` adds three controls on top of the plain runner.
+
+- Timing tolerance: a step can carry a `tolerance` fraction. The effective budget
+  becomes `max_latency_ms * (1 + tolerance)`, which keeps the documented budget
+  separate from the noise allowance.
+- Retry on transient: `RetryPolicy` retries a bounded number of times, but only
+  for transient failures, a timing breach or a response matching a caller
+  supplied pattern. A value mismatch is never retried, because a wrong value is a
+  defect, not noise. A pass after a retry is recorded in the step messages.
+- Flake detection: `detect_flake` runs a step N times against a fresh transport
+  each repeat and classifies it as stable pass, stable fail, or flaky. A step
+  that passes on some repeats and fails on others is reported as flaky rather
+  than slipping through on a lucky run or failing on an unlucky one.
+
+The flake path is proven by a test that injects an alternating slow and fast
+latency sequence into the DUT so the step straddles its budget, then asserts the
+result is classed as flaky.
+
+```yaml
+steps:
+  - name: set_speed
+    command: SETSPEED 4200
+    expect: OK speed=4200
+    max_latency_ms: 20
+    tolerance: 0.25
+```
+
 ## Throughput benchmark
 
 `benchmarks/throughput.py` builds a large scenario batch and measures how many
