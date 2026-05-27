@@ -24,6 +24,8 @@ class Step:
     expect_contains: str | None = None
     # Maximum allowed response latency in milliseconds. None disables the check.
     max_latency_ms: float | None = None
+    # Fraction by which the latency budget is widened to absorb expected jitter.
+    tolerance: float = 0.0
     wait_ms: float = 0.0
 
     def __post_init__(self) -> None:
@@ -52,6 +54,7 @@ def _step_from_dict(raw: dict[str, Any]) -> Step:
         expect=_opt_str(raw.get("expect")),
         expect_contains=_opt_str(raw.get("expect_contains")),
         max_latency_ms=_opt_float(raw.get("max_latency_ms")),
+        tolerance=float(raw.get("tolerance", 0.0)),
         wait_ms=float(raw.get("wait_ms", 0.0)),
     )
 
