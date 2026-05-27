@@ -89,6 +89,23 @@ with `OK` (with optional payload) or `ERR` (with a reason).
 
 An out of range `SETSPEED` drives the controller into `FAULT`; `RESET` recovers.
 
+## Throughput benchmark
+
+`benchmarks/throughput.py` builds a large scenario batch and measures how many
+steps per second the runner drives against the in process DUT with modeled
+service times removed, so the number reflects framework overhead. On a local run
+at 200 scenarios of 50 steps each (10000 steps), the best of seven repeats was
+about 1.03 million steps per second.
+
+```
+python -m benchmarks.throughput --scenarios 200 --steps 50 --repeats 7
+```
+
+CI runs `benchmarks/check_regression.py` as a smoke gate. It measures throughput
+and fails if it falls below a conservative floor by more than 30 percent. The
+floor is set well under the local figure to absorb shared runner variance, so the
+gate catches a real regression without flaking on noise.
+
 ## How this differs
 
 HILBench is a generic HIL framework: a scenario format, a simulated DUT, timing
