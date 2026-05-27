@@ -25,6 +25,8 @@ jobs:
         run: pytest -q --junitxml=pytest-junit.xml
       - name: Scenario suite
         run: hilbench scenarios/ --json report.json --junit scenario-junit.xml
+      - name: Scenario matrix
+        run: hilbench scenarios/speed_sweep.matrix.yaml --matrix --json matrix.json --junit matrix-junit.xml
       - name: Summarize JUnit
         if: always()
         run: python -c "import xml.etree.ElementTree as ET,glob,sys;[print(f) for f in glob.glob('*junit*.xml')]"
@@ -36,6 +38,7 @@ jobs:
           path: |
             pytest-junit.xml
             scenario-junit.xml
+            matrix-junit.xml
             report.json
 
   bench-regress:

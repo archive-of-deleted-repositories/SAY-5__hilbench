@@ -89,6 +89,32 @@ with `OK` (with optional payload) or `ERR` (with a reason).
 
 An out of range `SETSPEED` drives the controller into `FAULT`; `RESET` recovers.
 
+## Scenario matrices
+
+A matrix is one scenario template expanded over many parameter sets. Template
+fields use `{name}` placeholders filled from each case. Every case runs as its
+own scenario, so the JUnit report carries a testsuite per case and the JSON
+report carries a scenario per case, with a consolidated per case pass/fail line.
+
+```
+hilbench scenarios/speed_sweep.matrix.yaml --matrix --json report.json --junit report.xml
+```
+
+```yaml
+name: speed_sweep
+template:
+  steps:
+    - name: set_speed
+      command: "SETSPEED {speed}"
+      expect: "OK speed={speed}"
+      max_latency_ms: 50
+cases:
+  - name: low
+    params: {speed: 100}
+  - name: high
+    params: {speed: 9500}
+```
+
 ## Timing tolerance, retry, and flake detection
 
 Benches are noisy, so a single slow response can be a real regression or a one
