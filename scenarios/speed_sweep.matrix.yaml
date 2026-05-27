@@ -1,0 +1,30 @@
+name: speed_sweep
+description: Set a range of speeds on a running controller and verify each.
+template:
+  steps:
+    - name: arm
+      command: ARM
+      expect: OK armed
+      max_latency_ms: 50
+    - name: start
+      command: START
+      expect: OK running
+      max_latency_ms: 50
+    - name: set_speed
+      command: "SETSPEED {speed}"
+      expect: "OK speed={speed}"
+      max_latency_ms: 50
+    - name: verify
+      command: STATUS
+      expect: "OK state=RUNNING speed={speed}"
+      max_latency_ms: 50
+cases:
+  - name: low
+    params:
+      speed: 100
+  - name: mid
+    params:
+      speed: 4200
+  - name: high
+    params:
+      speed: 9500
