@@ -1,0 +1,7 @@
+{
+  "measured_steps_per_second": 1032426.77,
+  "measured_seconds": 0.009685917,
+  "total_steps": 10000,
+  "gate_floor_steps_per_second": 250000,
+  "note": "measured_* are from a local run of benchmarks.throughput at scenarios=200 steps=50 repeats=7. gate_floor_steps_per_second is a conservative floor for shared CI runners; the smoke gate also enforces a 30 percent drift band around it."
+}
