@@ -31,7 +31,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=hilbench --cov-report=term-missing --cov-fail-under=85"
+addopts = "--cov=hilbench --cov-report=term-missing --cov-fail-under=90"
 
 [tool.coverage.run]
 branch = true
