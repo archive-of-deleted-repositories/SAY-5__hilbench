@@ -1,0 +1,11 @@
+name: smoke
+description: Basic liveness and status checks against an idle controller.
+steps:
+  - name: ping
+    command: PING
+    expect: OK PONG
+    max_latency_ms: 50
+  - name: idle_status
+    command: STATUS
+    expect: OK state=IDLE speed=0
+    max_latency_ms: 50

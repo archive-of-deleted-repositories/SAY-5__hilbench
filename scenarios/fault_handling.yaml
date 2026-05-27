@@ -1,0 +1,27 @@
+name: fault_handling
+description: Drive the controller into a fault on out of range speed and recover.
+steps:
+  - name: arm
+    command: ARM
+    expect: OK armed
+    max_latency_ms: 50
+  - name: start
+    command: START
+    expect: OK running
+    max_latency_ms: 50
+  - name: over_range
+    command: SETSPEED 99999
+    expect: ERR out_of_range
+    max_latency_ms: 50
+  - name: fault_status
+    command: STATUS
+    expect_contains: state=FAULT
+    max_latency_ms: 50
+  - name: reset
+    command: RESET
+    expect: OK reset
+    max_latency_ms: 50
+  - name: recovered_status
+    command: STATUS
+    expect: OK state=IDLE speed=0
+    max_latency_ms: 50

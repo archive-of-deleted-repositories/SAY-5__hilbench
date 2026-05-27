@@ -1,0 +1,27 @@
+name: run_cycle
+description: Arm, start, set speed, then stop the controller and verify state.
+steps:
+  - name: arm
+    command: ARM
+    expect: OK armed
+    max_latency_ms: 50
+  - name: start
+    command: START
+    expect: OK running
+    max_latency_ms: 50
+  - name: set_speed
+    command: SETSPEED 4200
+    expect: OK speed=4200
+    max_latency_ms: 50
+  - name: running_status
+    command: STATUS
+    expect: OK state=RUNNING speed=4200
+    max_latency_ms: 50
+  - name: stop
+    command: STOP
+    expect: OK stopped
+    max_latency_ms: 50
+  - name: stopped_status
+    command: STATUS
+    expect: OK state=IDLE speed=0
+    max_latency_ms: 50
