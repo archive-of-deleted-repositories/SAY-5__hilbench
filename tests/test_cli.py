@@ -23,6 +23,23 @@ def test_cli_runs_scenarios_clean(tmp_path):
     assert junit_path.exists()
 
 
+def test_cli_runs_matrix(tmp_path):
+    json_path = tmp_path / "m.json"
+    junit_path = tmp_path / "m.xml"
+    code = main(
+        [
+            str(SCENARIOS / "speed_sweep.matrix.yaml"),
+            "--matrix",
+            "--json",
+            str(json_path),
+            "--junit",
+            str(junit_path),
+        ]
+    )
+    assert code == 0
+    assert junit_path.exists()
+
+
 def test_cli_fails_on_bad_expectation(tmp_path):
     scenario = tmp_path / "bad.yaml"
     scenario.write_text(
